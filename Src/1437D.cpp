@@ -35,37 +35,28 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
-{
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
-    }
-
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
-        }
-    }
-
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
-}
+/*
+    Guardamos o parent node de cada bifurcação
+    Quando encontramos uma posição não cescente, incrementamos o parent node (já sabemos a ordem pela qual foram percorridos!)
+    A depth do i é a depth do parent + 1
+*/
 
 int main()
 {
     IOS;
     int t; cin >> t;
-    while(t--) solve();
+    while(t--) {
+        int n; cin >> n;
+        vi v(n);
+        for (int i = 0; i < n; i++) cin >> v[i];
+
+        vi h(n, 0); h[0] = 0;
+        int parent = 0;
+        for (int i = 1; i < n; i++) {
+            if (i - 1 > 0 && v[i-1] > v[i]) parent++;
+            h[i] = h[parent] + 1;
+        }
+        cout << h[n-1] << "\n";
+    }
     return 0;
 }

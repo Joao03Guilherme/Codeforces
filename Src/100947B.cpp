@@ -35,37 +35,35 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
+const int N = 8;
+
+bool is_valid()
 {
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
-    }
+    char c; int r;
+    bool cols[N], diag1[N*2], diag2[N*2];
+    memset(cols, false, sizeof(cols));
+    memset(diag1, false, sizeof(diag1));
+    memset(diag2, false, sizeof(diag2));
 
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
+    for (int i = 0; i < N; i++) {
+        cin >> c >> r;
+        int cl = c - 65; // Subtract 65 to index in zero the col
+        r--; // Index in zero
+        if (cols[cl] || diag1[r+cl] || diag2[cl-r+N-1]) {
+            return false;
         }
+        cols[cl] = diag1[r+cl] = diag2[cl-r+N-1] = true;
     }
-
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
+    return true;
 }
 
 int main()
 {
     IOS;
     int t; cin >> t;
-    while(t--) solve();
+    while(t--) {
+        if (is_valid()) cout << "Valid\n";
+        else cout << "Invalid\n";
+    }
     return 0;
 }

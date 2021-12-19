@@ -35,37 +35,32 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
-{
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
-    }
-
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
-        }
-    }
-
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
-}
-
 int main()
 {
     IOS;
-    int t; cin >> t;
-    while(t--) solve();
-    return 0;
+    string s; cin >> s;
+    int n = s.length();
+    int m; cin >> m;
+    // Calcular prefixos
+    int dp[n]; memset(dp, 0, sizeof(dp));
+    for (int i = 1; i < n; i++) {
+        if (s[i] == s[i-1]) dp[i] = dp[i-1] + 1;
+        else dp[i] = dp[i-1];
+    }
+
+    while(m--) {
+        int a, b; cin >> a >> b;
+        cout << dp[b-1] - dp[a-1] << "\n";
+    }
 }
+
+/*
+	COISAS A TOMAR ATENÇÃO
+    - Overflow
+    - Prestar atenção aos limites do problema
+    - É preciso apenas determinar um número ou a resposta "toda"
+    - Utilizar Sievo para primos
+    - Precomputação
+    - Inverter o problema
+    - Identificar implicações lógicas
+*/

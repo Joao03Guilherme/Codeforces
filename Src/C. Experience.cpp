@@ -35,37 +35,49 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
+const int MX = 2e5 + 1;
+int parent[MX];
+int experience[MX];
+int s[MX];
+
+int get_parent(int u)
 {
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
-    }
+    if (parent[u] == u) return u;
+    return parent[u] = get_parent(parent[u]);
+}
 
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
-        }
-    }
+void join()
+{
+     int u, v; cin >> u >> v;
+     u = get_parent(u); v = get_parent(v);
+     if (s[u] < s[v]) swap(u, v);
+     parent[v] = u;
+     s[u] += s[v];
+}
 
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
+void add()
+{
+    int x, v; cin >> x >> v;
+    x = get_parent(x);
+    experience[x] += v;
 }
 
 int main()
 {
     IOS;
-    int t; cin >> t;
-    while(t--) solve();
+    int n, m; cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        parent[i] = i; experience[i] = 0; s[i] = 1;
+    }
+
+    for (int i = 0; i< m; i++) {
+        string q; cin >> q;
+        if (q == "join") join();
+        else if (q == "add") add();
+        else {
+            int u; cin >> u;
+            cout << experience[get_parent(u)] << "\n";
+        }
+    }
     return 0;
 }

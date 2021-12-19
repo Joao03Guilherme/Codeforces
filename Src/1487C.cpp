@@ -35,32 +35,59 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
+
+/*
+/   ALGORITMO
+/   - Se n é ímpar, a k-ésima equipa ganha para as floor(n/2) equipas seguintes e perde para todas as floor(n/2) equipas restantes
+/   - Se n é par, a k-ésima equipa empata com a equipa diametralmente oposta,
+/     ganha para as floor(n-2/2) equipas seguintes e perde para as floor(n-2/2) restantes
+*/
+
 void solve()
 {
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
+    int n; cin >> n;
+    int res[n+1][n+1];
+    if (n % 2 == 1) {
+        int k = n/2;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= k; j++) {
+                int s = i - j;
+                int e = i + j;
+                if (s < 1) s += n;
+                if (e > n) e -= n;
+                res[i][s] = 1; // Win
+                res[i][e] = -1; // Lose
+            }
+        }
     }
+    else {
+        int k = (n-2)/2;
+        int op = n/2 + 1; // Oposite team
+        for (int i = 1; i <= n; i++) {
+            res[i][op] = 0; // Tie
+            for (int j = 1; j <= k; j++) {
+                int s = i - j;
+                int e = i + j;
+                if (s < 1) s += n;
+                if (e > n) e -= n;
+                res[i][s] = 1; // Win
+                res[i][e] = -1; // Lose
+            }
 
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
+            op %= n;
+            op++;
         }
     }
 
-    for (auto x : ans) {
-        cout << x << " ";
+    for (int i = 1; i <= n-1; i++) {
+        for (int j = i+1; j <= n; j++) {
+            cout << res[i][j] << " ";
+        }
     }
     cout << "\n";
 }
+
+
 
 int main()
 {

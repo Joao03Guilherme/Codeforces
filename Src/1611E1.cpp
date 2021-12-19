@@ -35,31 +35,43 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
+// Fazer BFS partindo da root e dos amigos
+// Se o caminho da root chegar primeiro a um determinado ponto, marca-mos como 1
+// Se um amigo chegar primeiro, marcamos como 0
+
 void solve()
 {
     int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
+    queue <int> q;
+    vi dist(n+1, -1); dist[1] = 1; // Marks who gets first
+    for (int i = 0; i < k; i++) {
+        int f; cin >> f; q.push(f);
+        dist[f] = 0;
     }
 
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
+    vi adj[n+1];
+    for (int i = 0; i < n-1; i++) {
+        int u, v; cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    q.push(1);
+    while(!q.empty()) {
+        int curr = q.front(); q.pop();
+        for (int x : adj[curr]) {
+            if (dist[x] != -1) continue;
+            dist[x] = dist[curr];
+            q.push(x);
         }
     }
 
-    for (auto x : ans) {
-        cout << x << " ";
+    for (int i = 2; i <= n; i++) { // O node 1 nunca pode ser o caminho final
+        if (adj[i].size() == 1 && dist[i] == 1) {
+            cout << "YES\n"; return;
+        }
     }
-    cout << "\n";
+    cout << "NO\n";
 }
 
 int main()
@@ -69,3 +81,14 @@ int main()
     while(t--) solve();
     return 0;
 }
+
+/*
+	COISAS A TOMAR ATENÇÃO
+    - Overflow
+    - Prestar atenção aos limites do problema
+    - É preciso apenas determinar um número ou a resposta "toda"
+    - Utilizar Sievo para primos
+    - Precomputação
+    - Inverter o problema
+    - Identificar implicações lógicas
+*/

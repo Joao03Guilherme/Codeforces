@@ -35,37 +35,38 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
+int ans = INF;
+
+void solve(int k, int score, vector<bool> vis)
+{
+    if (k == 0) {
+
+        return;
+    }
+}
+
+void s()
 {
     int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
-    }
+    vi a(n); for (int& x : a) cin >> a;
 
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
-        }
-    }
-
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
 }
 
 int main()
 {
     IOS;
-    int t; cin >> t;
-    while(t--) solve();
+    int t; cin >> n;
+    while(t--) s();
     return 0;
 }
+
+/*
+	COISAS A TOMAR ATENÇÃO
+    - Overflow
+    - Prestar atenção aos limites do problema
+    - É preciso apenas determinar um número ou a resposta "toda"
+    - Utilizar Sievo para primos
+    - Precomputação
+    - Inverter o problema
+    - Identificar implicações lógicas
+*/

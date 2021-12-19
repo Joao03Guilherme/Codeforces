@@ -9,31 +9,50 @@ const int INF = 1000000009;
 const long long INFLL = (ll)INF * (ll)INF;
 const ll MOD = 1e9 + 7;
 
+/*
+    POSSIBILIDADES DE RESOLUÇÃO
+    - Encontrar o número de componentes conexos com DSU
+    - Encontrar o número de componentes conexos com BFS/DFS
+*/
+
+void dfs(int u, vi adj[], vi& vis)
+{
+    for (int x : adj[u]) {
+        if (!vis[x]) {
+            vis[x] = 1;
+            dfs(x, adj, vis);
+        }
+    }
+}
+
 int main()
 {
     IOS;
     int t; cin >> t;
     while(t--) {
         int n; cin >> n;
-        vi a(n+1), b(n+1);
+        int arr[2][n];
+        vi adj[n+1];
         for (int i = 0; i < 2; i++) {
-            for (int j = 1; j <= n; j++){
-                if (i == 0) cin >> a[j];
-                else cin >> b[j];
+            for (int j = 0; j < n; j++) {
+                cin >> arr[i][j];
             }
         }
 
-        vi c(n+1);
-        for (int i = 1; i <= n; i++) {
-            c[a[i]] = b[i];
+        for (int i = 0; i < n; i++) {
+            int u = arr[0][i], v = arr[1][i];
+            adj[u].pb(v);
+            adj[v].pb(u);
         }
 
+        vi vis(n+1, 0);
         ll ans = 1;
         for (int i = 1; i <= n; i++) {
-            if (i == c[c[i]]) {ans += 1; c[c[i]] = 0;}
+            if (vis[i]) continue;
+            dfs(i, adj, vis);
+            ans = ans*2ll % MOD;
         }
-
-        cout << pow(2, ans) << "\n";
+        cout << ans << "\n";
     }
     return 0;
 }

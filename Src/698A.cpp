@@ -35,37 +35,39 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
-{
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
-    }
-
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
-        }
-    }
-
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
-}
-
 int main()
 {
     IOS;
-    int t; cin >> t;
-    while(t--) solve();
+    int n; cin >> n;
+    int dp[n+1][3]; dp[0][0] = dp[0][1] = dp[0][2] = 0;
+    for (int i = 1; i <= n; i++) {
+      int a; cin >> a;
+      dp[i][0] = min(dp[i - 1][0], min(dp[i - 1][1], dp[i - 1][2])) + 1;
+      if (a == 0) { // Closed, rest day is mandatory
+         dp[i][1] = min(dp[i - 1][0], dp[i - 1][2]) + 1;
+         dp[i][2] = min(dp[i - 1][0], dp[i - 1][1]) + 1;
+      } else if (a == 1) {
+         dp[i][1] = min(dp[i - 1][0], dp[i - 1][2]);
+         dp[i][2] = min(dp[i - 1][0], dp[i - 1][1]) + 1;
+      } else if (a == 2) {
+         dp[i][1] = min(dp[i - 1][0], dp[i - 1][2]) + 1;
+         dp[i][2] = min(dp[i - 1][0], dp[i - 1][1]);
+      } else if (a == 3) {
+         dp[i][1] = min(dp[i - 1][0], dp[i - 1][2]);
+         dp[i][2] = min(dp[i - 1][0], dp[i - 1][1]);
+      }
+    }
+    cout << min(dp[n][0], min(dp[n][1], dp[n][2])) << "\n";
     return 0;
 }
+
+/*
+	COISAS A TOMAR ATENÇÃO
+    - Overflow
+    - Prestar atenção aos limites do problema
+    - É preciso apenas determinar um número ou a resposta "toda"
+    - Utilizar Sievo para primos
+    - Precomputação
+    - Inverter o problema
+    - Identificar implicações lógicas
+*/

@@ -1,5 +1,6 @@
 # include <bits/stdc++.h>
 # define IOS ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+# define eb emplace_back
 # define pb push_back
 using namespace std;
 using ll = long long int;
@@ -35,37 +36,61 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 
-void solve()
+/*
+    Aplicação direta do algoritmo de Dijkstra, sem qualquer otimização
+*/
+
+struct mycmp
 {
-    int n, k; cin >> n >> k;
-    map <int, int> mp;
-    vector <pii> s;
-    vi ans(n, 0);
-    for (int i = 0; i < n; i++) {
-        int a; cin >> a;
-        if (mp[a] >= k) continue;
-        mp[a]++;
-        s.pb({a, i});
+    bool operator()(pii a, pii b)
+    {
+        if (a.second > b.second) return true;
+        return false;
     }
-
-    sort(s.begin(), s.end());
-    int r = (int)s.size()/k;
-    for (int i = 0; i < r; i++) {
-        for (int c = 1; c <= k; c++) {
-            ans[s[k*i+c-1].second] = c;
-        }
-    }
-
-    for (auto x : ans) {
-        cout << x << " ";
-    }
-    cout << "\n";
-}
+};
 
 int main()
 {
     IOS;
-    int t; cin >> t;
-    while(t--) solve();
+    int n, m; cin >> n >> m;
+    vector <pii> adj[n+1];
+    for (int i = 0; i < m; i++) {
+        int u, v, c; cin >> u >> v >> c;
+        adj[u].pb({v, c});
+        adj[v].pb({u, c});
+    }
+
+    // Correr dijkstra
+    vector<ll> dist(n+1, INFLL); dist[1] = 0;
+    vi parent(n+1, -1);
+    vi processed(n+1 ,0);
+    priority_queue <pii, vector<pii>, mycmp> pq;
+    pq.push({1, 0});
+    while(!pq.empty()) {
+        pii curr = pq.top(); pq.pop();
+        processed[curr.first] = 1;
+        for (pii x: adj[curr.first]) {
+            if (processed[x.first]) continue;
+            if (dist[curr.first] + x.second < dist[x.first]) {
+                dist[x.first] = dist[curr.first] + x.second;
+                parent[x.first] = curr.first;
+            }
+            pq.push({x.first, dist[x.first]});
+        }
+    }
+
+    if (dist[n] == INFLL) cout << "-1\n";
+    else {
+        vi ans;
+        int nd = n;
+        while(nd!=1) {
+            ans.pb(nd);
+            nd = parent[nd];
+        }
+        ans.pb(1);
+        reverse(ans.begin(), ans.end());
+        for (auto x: ans) cout << x << " ";
+        cout << "\n";
+    }
     return 0;
 }
